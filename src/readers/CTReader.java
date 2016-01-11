@@ -96,11 +96,16 @@ public class CTReader {
 	}
 
 	public static void main(String[] args) throws IOException {
-		List<Aptamer> a = readCTListFile("/local/scratch/aptamer/somect.ct");
+		List<Aptamer> a = readCTListFile("/local/scratch/aptamer/allct.ct");
+//		List<Aptamer> a = readCTListFile("/local/scratch/aptamer/somect.ct");
+//		List<Aptamer> a = readCTListFile("/local/scratch/aptamer/doubletri.ct");
+//		List<Aptamer> a = readCTListFile("/local/scratch/aptamer/problem.ct");
 		System.out.println("Read in " + a.size() + " aptamers");
-		for(Aptamer aa: a){
+		for(int i=0; i < a.size(); i++){
+			Aptamer aa = a.get(i);
 			aa.simplify();
-			System.out.println(aa.toString());
+			System.out.println(aa.toDotString());
 		}
+
 	}
 }

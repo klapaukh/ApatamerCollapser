@@ -2,23 +2,36 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class Triangle implements Node{
+public class Triangle implements Node {
 
 	private final int id;
 	private List<Integer> neighbors;
 	private int length;
 
-	public Triangle(Collection<Integer> c, int idx) {
-		if(c.size() > 3){
-			throw new IllegalArgumentException("Node has " + c.size() + " neighbors. Can only have a max of 3.");
+	public Triangle(int idx) {
+		this.id = idx;
+		neighbors = new ArrayList<Integer>();
+		this.length = 1;
+	}
+
+	public Triangle(Collection<Integer> neighbors, int idx) {
+		if (neighbors.size() > 3) {
+			throw new IllegalArgumentException("Node has " + neighbors.size() + " neighbors. Can only have a max of 3.");
 		}
 		this.length = 1;
 		this.id = idx;
-		neighbors = new ArrayList<Integer>(c);
-		Collections.sort(neighbors);
+		neighbors = new ArrayList<Integer>(neighbors);
+	}
+
+	@Override
+	public void setNeighbors(Collection<Integer> neighbours) {
+		this.neighbors = new ArrayList<Integer>(neighbours);
+	}
+
+	public void incrementLength(){
+		this.length ++;
 	}
 
 	@Override
@@ -29,47 +42,33 @@ public class Triangle implements Node{
 	@Override
 	public void addAllMyNeighbors(Collection<Integer> c) {
 		c.addAll(neighbors);
-		Collections.sort(neighbors);
-	}
-
-	@Override
-	public boolean isTriangleFrom(Node[] nodes, int i) {
-		boolean found = false;
-		for(int n= 1 ; n < neighbors.size(); n++){
-			if(neighbors.get(n) == neighbors.get(n-1)){
-
-				int idx = neighbors.get(n);
-
-				//it's a triangle...
-				length += 1;
-
-				neighbors.remove(n); // Remove second instance
-				neighbors.remove(n-1); // Remove first instance
-
-				nodes[idx] = null;
-				Aptamer.relabel(nodes, idx, this.id);
-				found = true;
-			}
-		}
-		return found;
-	}
-
-	@Override
-	public boolean isSquareFrom(Node[] nodes, int i) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
 	public void relabel(Collection<Integer> oldLabels, int newLabel) {
-		if(neighbors.removeAll(oldLabels)){
-			neighbors.add(newLabel);
-			Collections.sort(neighbors);
-		}
+		neighbors.replaceAll(x -> oldLabels.contains(x) ? newLabel : x);
 	}
 
-	public String toString(){
+	public String toString() {
 		return "(Tri-" + length + ")";
+	}
+
+	@Override
+	public String toDotAttributes() {
+		return id + " [label=\"Tri-" +length + "\"];\n";
+	}
+
+	public String toDotString(){
+		StringBuilder b = new StringBuilder();
+		for(int i : neighbors){
+			if(i > id){
+				b.append(id);
+				b.append(" -- ");
+				b.append(i);
+				b.append(";\n");
+			}
+		}
+		return b.toString();
 	}
 
 	public boolean equals(Object o) {
@@ -78,4 +77,20 @@ public class Triangle implements Node{
 		}
 		return id == ((Triangle) o).id;
 	}
+
+	@Override
+	public void removeNeighbors(Collection<Integer> neighbours) {
+		this.neighbors.removeAll(neighbours);
+	}
+
+	public void addNeighbor(int n){
+		this.neighbors.add(n);
+	}
+
+	public void addNeighbours(Collection<Integer> neighbours) {
+		this.neighbors.addAll(neighbours);
+
+	}
+
+
 }

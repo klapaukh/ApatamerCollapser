@@ -1,6 +1,5 @@
 package graph;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class IndexBase implements Node {
@@ -37,6 +36,24 @@ public class IndexBase implements Node {
 		return base.toString();
 	}
 
+	@Override
+	public String toDotAttributes() {
+		return id + " [label=\"" + base.toString() + "\"];\n";
+	}
+
+	public String toDotString(){
+		StringBuilder b = new StringBuilder();
+		for(int i : this.neighbors()){
+			if(i > id){
+				b.append(id);
+				b.append(" -- ");
+				b.append(i);
+				b.append(";\n");
+			}
+		}
+		return b.toString();
+	}
+
 	public boolean hasNeighbor(int neighbor) {
 		if (neighbor == -1) {
 			return false;
@@ -51,10 +68,6 @@ public class IndexBase implements Node {
 		return id == ((IndexBase) o).id;
 	}
 
-	public boolean isSquareFrom(Node[] nodes, int i) {
-		return false;
-	}
-
 	public void addAllMyNeighbors(Collection<Integer> c) {
 		if (this.five != -1) {
 			c.add(this.five);
@@ -66,58 +79,6 @@ public class IndexBase implements Node {
 			c.add(this.hbond);
 		}
 	}
-
-	public boolean isTriangleFrom(Node[] nodes, int i) {
-		Integer one = null;
-		Integer two = null;
-
-		one = five < i && five >= 0 ? null : five;
-
-		if (one == null) {
-			one = three < i && three >= 0 ? null : three;
-		} else {
-			two = three < i && three >= 0 ? null : three;
-		}
-
-		two = hbond < i && hbond >= 0 ? null : hbond;
-
-		if (one != -1 && two != null && nodes[one].hasNeighbor(two)) {
-			// congratulations - it's a triangle.
-
-			// These are going to be all the neighbors of the new node, which is
-			// just all the neighbors of the composing nodes
-			Collection<Integer> neighbors = new ArrayList<Integer>();
-			addAllMyNeighbors(neighbors);
-			nodes[one].addAllMyNeighbors(neighbors);
-			nodes[two].addAllMyNeighbors(neighbors);
-
-			// These are the indicies which no longer exist
-			Collection<Integer> oldLabels = new ArrayList<>();
-			oldLabels.add(one);
-			oldLabels.add(two);
-			oldLabels.add(id);
-
-			// Remove connections between what are now internal nodes.
-			neighbors.removeAll(oldLabels);
-
-			//Create the new node
-			Triangle t = new Triangle(neighbors, id);
-
-			//Replace the values in the array
-			nodes[i] = t;
-
-			nodes[one] = null;
-			nodes[two] = null;
-
-			//Tell everyone else about it
-			Aptamer.relabel(nodes, oldLabels, i);
-
-			return true;
-		}
-
-		return false;
-	}
-
 
 	@Override
 	public void relabel(Collection<Integer> oldLabels, int newLabel) {
@@ -132,5 +93,21 @@ public class IndexBase implements Node {
 		}
 
 	}
+
+
+	@Override
+	public void removeNeighbors(Collection<Integer> neighbours) {
+		this.relabel(neighbours,-1);
+	}
+
+	@Override
+	public void setNeighbors(Collection<Integer> neighbours) {
+		throw new IllegalArgumentException("This method should not be being called");
+	}
+
+	public void addNeighbor(int n){
+		throw new IllegalArgumentException("This method should not be being called");
+	}
+
 
 }

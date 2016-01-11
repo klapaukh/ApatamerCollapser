@@ -4,22 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Railroad implements Node {
+public class Circle implements Node {
 
 	private final int id;
 	private List<Integer> neighbors;
 	private int length;
 
-	public Railroad(int idx) {
+
+	public Circle(int idx, int length) {
 		this.id = idx;
 		neighbors = new ArrayList<Integer>();
-		this.length = 1;
-	}
-
-	public Railroad(Collection<Integer> neighbors, int idx) {
-		this.length = 1;
-		this.id = idx;
-		neighbors = new ArrayList<Integer>(neighbors);
+		this.length = length;
 	}
 
 	@Override
@@ -42,13 +37,19 @@ public class Railroad implements Node {
 		neighbors.replaceAll(x -> oldLabels.contains(x)? newLabel : x);
 	}
 
+	@Override
+	public void removeNeighbors(Collection<Integer> neighbours) {
+		neighbors.removeAll(neighbours);
+	}
+
+	@Override
 	public String toString() {
-		return "(Rail-" + length + ")";
+		return "(Circle-" + length + ")";
 	}
 
 	@Override
 	public String toDotAttributes() {
-		return id + " [label=\"Rail-" +length + "\"];\n";
+		return id + " [label=\"Circle-" +length + "\"];\n";
 	}
 
 	public String toDotString(){
@@ -64,16 +65,12 @@ public class Railroad implements Node {
 		return b.toString();
 	}
 
+	@Override
 	public boolean equals(Object o) {
-		if (!(o instanceof Railroad)) {
+		if (!(o instanceof Circle)) {
 			return false;
 		}
-		return id == ((Railroad) o).id;
-	}
-
-	@Override
-	public void removeNeighbors(Collection<Integer> neighbours) {
-		neighbors.removeAll(neighbours);
+		return id == ((Circle) o).id;
 	}
 
 	public void addNeighbours(Collection<Integer> neighbours) {
@@ -84,7 +81,4 @@ public class Railroad implements Node {
 		this.neighbors.add(n);
 	}
 
-	public void incrementLength() {
-		this.length ++;
-	}
 }

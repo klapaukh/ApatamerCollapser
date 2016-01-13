@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import util.LblTree;
+
 public class Aptamer {
 
 	// These are stored in order I assume from 5' to 3'
@@ -22,6 +24,25 @@ public class Aptamer {
 			throw new IllegalArgumentException("Element " + i + " already has something there");
 		}
 		bases[i] = n;
+	}
+
+	public LblTree toLblTree(int id) {
+		Set<Integer> visited = new HashSet<>();
+		visited.add(0);
+		return toLblTree(0, id, visited);
+	}
+
+	public LblTree toLblTree(int node, int id, Set<Integer> visited) {
+		int treeID = id;
+
+		LblTree root = new LblTree(bases[node].GEDLabel(), treeID);
+
+		for (int i : bases[node].neighbors()) {
+			if (visited.add(i)) {
+				root.add(toLblTree(i, id, visited));
+			}
+		}
+		return root;
 	}
 
 	public String toString() {
@@ -69,7 +90,7 @@ public class Aptamer {
 				continue;
 			}
 			Collection<Integer> n = bases[i].neighbors();
-			if(n.size() > 2){
+			if (n.size() > 2) {
 				throw new RuntimeException("Really?!");
 			}
 			if (n.stream().allMatch(idx -> !(bases[idx] instanceof Line))) {
@@ -78,20 +99,20 @@ public class Aptamer {
 				bases[i] = line;
 				continue;
 			}
-			//1 or two are lines.
+			// 1 or two are lines.
 			List<Integer> ns = n.stream().filter(x -> !(bases[x] instanceof Line)).collect(Collectors.toList());
 			n.removeIf(x -> !(bases[x] instanceof Line));
-			if(n.size() == 1){
+			if (n.size() == 1) {
 				int newMe = n.iterator().next();
-				Line l = (Line)bases[newMe];
+				Line l = (Line) bases[newMe];
 				l.addNeighbours(ns);
 				l.increment();
 				relabel(i, newMe);
 				bases[i] = null;
-			}else if(n.size() == 2){
+			} else if (n.size() == 2) {
 				Iterator<Integer> it = n.iterator();
 				int newMe = it.next();
-				Line l = (Line)bases[newMe];
+				Line l = (Line) bases[newMe];
 				l.increment();
 				relabel(i, newMe);
 				bases[i] = null;
@@ -103,10 +124,10 @@ public class Aptamer {
 
 				l.addNeighbours(otherNeighbors);
 
-				bases[other]=null;
-				relabel(other,newMe);
+				bases[other] = null;
+				relabel(other, newMe);
 
-			}else{
+			} else {
 				throw new RuntimeException("I don't even know what happened, but it's wrong");
 			}
 		}
@@ -142,7 +163,8 @@ public class Aptamer {
 			complexNodes.forEach(x -> bases[x].removeNeighbors(simpleNodes));
 			complexNodes.forEach(x -> bases[x].addNeighbor(newMe));
 
-			//However, complex nodes who are each other's neighbors are not anymore
+			// However, complex nodes who are each other's neighbors are not
+			// anymore
 			complexNodes.forEach(x -> bases[x].removeNeighbors(complexNodes));
 
 			this.relabel(simpleNodes, newMe);

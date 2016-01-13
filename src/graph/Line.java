@@ -88,4 +88,9 @@ public class Line implements Node{
 	public void increment(Line l){
 		this.length += l.length;
 	}
+
+	@Override
+	public String GEDLabel() {
+		return "line";
+	}
 }

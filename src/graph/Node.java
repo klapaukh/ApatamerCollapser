@@ -22,6 +22,8 @@ public interface Node {
 	public String toDotAttributes();
 	public String toDotString();
 
+	public String GEDLabel();
+
 	public void addNeighbor(int n);
 
 

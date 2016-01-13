@@ -87,4 +87,9 @@ public class Railroad implements Node {
 	public void incrementLength() {
 		this.length ++;
 	}
+
+	@Override
+	public String GEDLabel() {
+		return "railroad";
+	}
 }

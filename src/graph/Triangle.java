@@ -92,5 +92,10 @@ public class Triangle implements Node {
 
 	}
 
+	@Override
+	public String GEDLabel() {
+		return "Triangle";
+	}
+
 
 }

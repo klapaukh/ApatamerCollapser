@@ -109,5 +109,10 @@ public class IndexBase implements Node {
 		throw new IllegalArgumentException("This method should not be being called");
 	}
 
+	@Override
+	public String GEDLabel() {
+		return "Base";
+	}
+
 
 }

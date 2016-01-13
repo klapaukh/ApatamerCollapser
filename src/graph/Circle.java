@@ -81,4 +81,9 @@ public class Circle implements Node {
 		this.neighbors.add(n);
 	}
 
+	@Override
+	public String GEDLabel() {
+		return "circle";
+	}
+
 }

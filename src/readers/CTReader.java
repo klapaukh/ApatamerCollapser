@@ -78,7 +78,7 @@ public class CTReader {
 
 		Aptamer a = new Aptamer(numLines);
 		for (int i = 0; i < numLines; i++) {
-			String[] line = scan.nextLine().split("\\s+");
+			String[] line = scan.nextLine().trim().split("\\s+");
 			if (line.length != 6) {
 				throw new IOException("Found row of length " + line.length + " on line " + (i + 1));
 			}
